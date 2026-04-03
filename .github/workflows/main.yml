@@ -6,7 +6,7 @@ on:
       env:
         description: Select Environment
         type: choice
-        options: [testing, acceptance, production]
+        options: [testing, acceptance, Prod]
         default: testing
 
 permissions:
@@ -35,20 +35,20 @@ jobs:
 
       - name: Lint Bicep
         run: |
-          az bicep build --file ./templates/main.bicep
+          az bicep build --file ./templates/storage.bicep
 
       - name: Validate template at subscription scope
         run: |
           az deployment sub validate \
             --location westeurope \
-            --template-file ./templates/main.bicep
+            --template-file ./templates/storage.bicep
 
       - name: What if preview
         if: ${{ success() }}
         run: |
           az deployment sub what-if \
             --location westeurope \
-            --template-file ./templates/main.bicep
+            --template-file ./templates/storage.bicep
 
       - name: Deploy subscription template
         if: ${{ success() }}
@@ -57,5 +57,5 @@ jobs:
           scope: subscription
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           region: westeurope
-          template: ./templates/main.bicep
+          template: ./templates/storage.bicep
           failOnStdErr: false
